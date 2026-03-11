@@ -1,0 +1,48 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Temporary and backup files
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.~lock.*
+
+# VS Code workspace files (keep selected configs)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+*.iml
+.idea/
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+bin/
+out/
