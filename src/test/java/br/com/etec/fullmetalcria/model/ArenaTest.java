@@ -97,4 +97,17 @@ class ArenaTest {
                     "Arena Neutra não deve dar bônus para " + e.getNome());
         }
     }
+
+    @Test
+    @DisplayName("Arena de Fogo dá bônus +1 para técnica de Fogo")
+    void bonusTecnica_arenaFogoTecnicaFogo_bonus1() {
+        // Arrange: criar Arena de Fogo
+        Arena arenaFogo = new Arena("Rocha Magmática", Elemento.FOGO);
+
+        // Act + Assert: bônus para Fogo deve ser 1
+        assertEquals(1, arenaFogo.bonusTecnica(Elemento.FOGO));
+
+        // Act + Assert: bônus para Água deve ser 0
+        assertEquals(0, arenaFogo.bonusTecnica(Elemento.AGUA));
+    }
 }

@@ -211,4 +211,39 @@ class CriaTest {
         cria.ganharMarcos(3);
         assertEquals(5, cria.getMarcos());
     }
+
+    @Test
+    @DisplayName("Deve calcular atributos de Shooter/Bruto corretamente")
+    void constructor_shooterBruto_atributosCorretos() {
+        // Arrange: criar um Cria Shooter/Bruto
+        Cria shooterBruto = new Cria("T35T", Chassi.SHOOTER, Elemento.FOGO, Personalidade.BRUTO);
+
+        // Act: pegar os atributos calculados
+        Atributos attr = shooterBruto.getAtributos();
+
+        // Assert: verificar cada atributo
+        // Shooter base: DUR=11, MIR=4, VEL=3, CAR=1, DAN=3, BAT=6
+        // Bruto: +1 Dano, -1 Mira
+        assertEquals(11, attr.getDurabilidade());  // 11 (sem alteração)
+        assertEquals(3, attr.getMira());            // 4 - 1 (Bruto penalidade)
+        assertEquals(3, attr.getVelocidade());      // 3 (sem alteração)
+        assertEquals(1, attr.getCarapaca());         // 1 (sem alteração)
+        assertEquals(4, attr.getDano());             // 3 + 1 (Bruto bônus)
+        assertEquals(6, attr.getBateria());          // 6 (sem alteração)
+    }
+
+    @Test
+    @DisplayName("Cria de Fogo não pode aprender técnica de Água")
+    void aprenderTecnica_fogoAprendeAgua_lancaExcecao() {
+        // Arrange: criar Cria de Fogo
+        Cria criaFogo = new Cria("F0G0", Chassi.SHOTO, Elemento.FOGO, Personalidade.HUMILDE);
+
+        // Arrange: criar técnica de Água
+        Tecnica tecnicaAgua = new Tecnica("Tsunami", Elemento.AGUA, 3, "Ataque de água poderoso");
+
+        // Act + Assert: deve lançar exceção ao tentar aprender
+        assertThrows(IllegalStateException.class, () -> {
+            criaFogo.aprenderTecnica(tecnicaAgua);
+        });
+    }
 }
