@@ -329,4 +329,71 @@ class CriaTest {
         assertEquals(2, attr.getDano());             // 2 (sem alteração)
         assertEquals(5, attr.getBateria());           // 5 (sem alteração)
     }
+
+    // ==================== COBERTURA (Desafio JaCoCo) ====================
+
+    @Test
+    @DisplayName("Memória disponível deve diminuir conforme equipa peças")
+    void memoriaDisponivel_comPecas_calculaCorreto() {
+        // Sem peças: 3 disponíveis
+        assertEquals(3, cria.memoriaDisponivel());
+
+        // Equipa peça de memória 1
+        cria.equiparPeca(new Peca("Peça 1", 1, SlotPeca.PARTE_SUPERIOR, "..."));
+        assertEquals(2, cria.memoriaDisponivel());
+
+        // Equipa peça de memória 2
+        cria.equiparPeca(new Peca("Peça 2", 2, SlotPeca.PARTE_INFERIOR, "..."));
+        assertEquals(0, cria.memoriaDisponivel());
+    }
+
+    @Test
+    @DisplayName("Preparar para combate deve funcionar mesmo sem peças nem status")
+    void prepararParaCombate_semPecasNemStatus_naoQuebraNada() {
+        // Caso vazio: nenhuma peça, nenhum status
+        cria.prepararParaCombate();
+
+        assertTrue(cria.getStatusAtivos().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Preparar para combate deve limpar múltiplos status e resetar múltiplas peças")
+    void prepararParaCombate_comMultiplosStatusEPecas_limpaTudo() {
+        // Aplica vários status
+        cria.aplicarStatus(StatusEfeito.EM_CHAMAS);
+        cria.aplicarStatus(StatusEfeito.CONGELADO);
+        cria.aplicarStatus(StatusEfeito.ENVENENADO);
+
+        // Equipa e ativa várias peças
+        Peca peca1 = new Peca("Peça 1", 1, SlotPeca.PARTE_SUPERIOR, "...");
+        Peca peca2 = new Peca("Peça 2", 1, SlotPeca.PARTE_INFERIOR, "...");
+        cria.equiparPeca(peca1);
+        cria.equiparPeca(peca2);
+        peca1.ativar();
+        peca2.ativar();
+
+        cria.prepararParaCombate();
+
+        assertTrue(cria.getStatusAtivos().isEmpty());
+        assertFalse(peca1.isAtivada());
+        assertFalse(peca2.isAtivada());
+    }
+
+    @Test
+    @DisplayName("Ganhar 0 marcos deve manter marcos iguais")
+    void ganharMarcos_zero_mantemIgual() {
+        int marcosAntes = cria.getMarcos();
+
+        cria.ganharMarcos(0);
+
+        assertEquals(marcosAntes, cria.getMarcos());
+    }
+
+    @Test
+    @DisplayName("Ganhar 100 marcos deve funcionar sem limite")
+    void ganharMarcos_valorAlto_funcionaSemLimite() {
+        cria.ganharMarcos(100);
+
+        assertEquals(100, cria.getMarcos());
+    }
 }
