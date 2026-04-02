@@ -246,4 +246,87 @@ class CriaTest {
             criaFogo.aprenderTecnica(tecnicaAgua);
         });
     }
+
+    // ==================== TESTES NOVOS (Aula 11/03) ====================
+
+    @Test
+    @DisplayName("Cria Neutro pode aprender técnica de qualquer elemento")
+    void aprenderTecnica_criaNeutro_aprendeQualquerElemento() {
+        // Arrange: Cria Neutro
+        Cria criaNeutro = new Cria("N3UTR0", Chassi.SHOTO, Elemento.NEUTRO, Personalidade.HUMILDE);
+
+        // Arrange: técnicas de elementos variados
+        Tecnica fogo = new Tecnica("Chama", Elemento.FOGO, 2, "Dano de fogo");
+        Tecnica agua = new Tecnica("Jato", Elemento.AGUA, 2, "Dano de água");
+
+        // Act + Assert: ambas devem funcionar
+        assertTrue(criaNeutro.aprenderTecnica(fogo));
+        assertTrue(criaNeutro.aprenderTecnica(agua));
+        assertEquals(2, criaNeutro.getTecnicas().size());
+    }
+
+    @Test
+    @DisplayName("Custo efetivo deve ser +1 para elemento diferente")
+    void custoEfetivo_elementoDiferente_custaMais1() {
+        // Arrange: técnica de Fogo com custo 2
+        Tecnica tecnicaFogo = new Tecnica("Chama", Elemento.FOGO, 2, "Ataque de fogo");
+
+        // Assert: mesmo elemento = custo base
+        assertEquals(2, tecnicaFogo.custoEfetivo(Elemento.FOGO));
+
+        // Assert: elemento diferente = custo + 1
+        assertEquals(3, tecnicaFogo.custoEfetivo(Elemento.VENTO));
+        assertEquals(3, tecnicaFogo.custoEfetivo(Elemento.AGUA));
+
+        // Arrange: técnica Neutra com custo 1
+        Tecnica tecnicaNeutra = new Tecnica("Soco", Elemento.NEUTRO, 1, "Soco básico");
+
+        // Assert: técnica Neutra = SEMPRE custo base
+        assertEquals(1, tecnicaNeutra.custoEfetivo(Elemento.FOGO));
+        assertEquals(1, tecnicaNeutra.custoEfetivo(Elemento.NEUTRO));
+        assertEquals(1, tecnicaNeutra.custoEfetivo(Elemento.AGUA));
+    }
+
+    @Test
+    @DisplayName("Peça quebrada não pode ser ativada")
+    void ativar_pecaQuebrada_retornaFalse() {
+        // Arrange: criar e quebrar a peça
+        Peca peca = new Peca("Espada Frágil", 2, SlotPeca.PARTE_SUPERIOR, "Dano+1");
+        peca.quebrar();
+
+        // Act + Assert: ativar deve retornar false
+        assertFalse(peca.ativar());
+        assertTrue(peca.isQuebrada()); // Confirmar que continua quebrada
+    }
+
+    @Test
+    @DisplayName("Peça consertada pode ser ativada novamente")
+    void ativar_pecaConsertada_retornaTrue() {
+        Peca peca = new Peca("Espada Frágil", 2, SlotPeca.PARTE_SUPERIOR, "Dano+1");
+        peca.quebrar();
+        peca.consertar();  // Conserta!
+
+        assertTrue(peca.ativar()); // Agora pode ativar
+        assertFalse(peca.isQuebrada()); // Não está mais quebrada
+    }
+
+    @Test
+    @DisplayName("Deve calcular atributos de Beast/Cuidadoso corretamente")
+    void constructor_beastCuidadoso_atributosCorretos() {
+        // Arrange: criar Cria Beast/Cuidadoso
+        Cria beastCuidadoso = new Cria("B34ST", Chassi.BEAST, Elemento.TERRA, Personalidade.CUIDADOSO);
+
+        // Act: pegar atributos
+        Atributos attr = beastCuidadoso.getAtributos();
+
+        // Assert: Beast base + Cuidadoso
+        // Beast:     DUR=15, MIR=4, VEL=3, CAR=3, DAN=2, BAT=5
+        // Cuidadoso: +1 CAR, -1 DUR
+        assertEquals(14, attr.getDurabilidade());  // 15 - 1
+        assertEquals(4, attr.getMira());            // 4 (sem alteração)
+        assertEquals(3, attr.getVelocidade());      // 3 (sem alteração)
+        assertEquals(4, attr.getCarapaca());         // 3 + 1
+        assertEquals(2, attr.getDano());             // 2 (sem alteração)
+        assertEquals(5, attr.getBateria());           // 5 (sem alteração)
+    }
 }
