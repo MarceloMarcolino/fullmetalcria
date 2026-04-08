@@ -19,7 +19,21 @@ class CriaTest {
     @BeforeEach
     void setUp() {
         // Cria um Shoto/Vento/Astuto para cada teste
-        cria = new Cria("T3ST", Chassi.SHOTO, Elemento.VENTO, Personalidade.ASTUTO);
+        cria = criarCria("T3ST", Chassi.SHOTO, Elemento.VENTO, Personalidade.ASTUTO);
+    }
+
+    // ==================== HELPERS ====================
+
+    private Cria criarCria(String nome, Chassi chassi, Elemento elem, Personalidade pers) {
+        return new Cria(nome, chassi, elem, pers);
+    }
+
+    private Peca criarPeca(String nome, int memoria, SlotPeca slot) {
+        return new Peca(nome, memoria, slot, "Efeito de teste");
+    }
+
+    private Tecnica criarTecnica(String nome, Elemento elem, int custo) {
+        return new Tecnica(nome, elem, custo, "Efeito de teste");
     }
 
     // ==================== CRIAÇÃO ====================
@@ -74,7 +88,7 @@ class CriaTest {
     @Test
     @DisplayName("Deve equipar peça quando há memória suficiente")
     void equiparPeca_memoriaDisponivel_equipaComSucesso() {
-        Peca ioio = new Peca("Iô Iô", 1, SlotPeca.PARTE_SUPERIOR, "+1 Dano");
+        Peca ioio = criarPeca("Iô Iô", 1, SlotPeca.PARTE_SUPERIOR);
         assertTrue(cria.equiparPeca(ioio));
         assertEquals(1, cria.getPecas().size());
         assertEquals(2, cria.memoriaDisponivel());
@@ -83,7 +97,7 @@ class CriaTest {
     @Test
     @DisplayName("Deve usar toda a memória com peça de 3 pontos")
     void equiparPeca_pecaDe3Memoria_usaTodaMemoria() {
-        Peca coleira = new Peca("Coleira", 3, SlotPeca.PARTE_SUPERIOR, "Modo Garoto Mau");
+        Peca coleira = criarPeca("Coleira", 3, SlotPeca.PARTE_SUPERIOR);
         cria.equiparPeca(coleira);
         assertEquals(0, cria.memoriaDisponivel());
     }
@@ -91,9 +105,9 @@ class CriaTest {
     @Test
     @DisplayName("Deve lançar exceção quando memória insuficiente")
     void equiparPeca_memoriaInsuficiente_lancaExcecao() {
-        cria.equiparPeca(new Peca("Peça Grande", 2, SlotPeca.PARTE_SUPERIOR, "..."));
+        cria.equiparPeca(criarPeca("Peça Grande", 2, SlotPeca.PARTE_SUPERIOR));
         assertThrows(IllegalStateException.class, () ->
-                cria.equiparPeca(new Peca("Peça Maior", 2, SlotPeca.PARTE_INFERIOR, "...")));
+                cria.equiparPeca(criarPeca("Peça Maior", 2, SlotPeca.PARTE_INFERIOR)));
     }
 
     // ==================== TÉCNICAS ====================
@@ -101,7 +115,7 @@ class CriaTest {
     @Test
     @DisplayName("Deve aprender técnica do mesmo elemento")
     void aprenderTecnica_mesmoElemento_aprendeComSucesso() {
-        Tecnica t = new Tecnica("Ventania", Elemento.VENTO, 2, "Dano em área");
+        Tecnica t = criarTecnica("Ventania", Elemento.VENTO, 2);
         assertTrue(cria.aprenderTecnica(t));
         assertEquals(1, cria.getTecnicas().size());
     }
@@ -109,7 +123,7 @@ class CriaTest {
     @Test
     @DisplayName("Deve aprender técnica de elemento Neutro")
     void aprenderTecnica_elementoNeutro_aprendeComSucesso() {
-        Tecnica t = new Tecnica("Soco Básico", Elemento.NEUTRO, 1, "Dano básico");
+        Tecnica t = criarTecnica("Soco Básico", Elemento.NEUTRO, 1);
         assertTrue(cria.aprenderTecnica(t));
     }
 
@@ -120,7 +134,7 @@ class CriaTest {
         // Vento > Terra, então Vento não pode aprender do que tem vantagem sobre ele
         // Quem tem vantagem sobre Vento? Fogo (Fogo > Vento)
         // Então Vento não pode aprender Fogo
-        Tecnica fogo = new Tecnica("Chama", Elemento.FOGO, 2, "Dano de fogo");
+        Tecnica fogo = criarTecnica("Chama", Elemento.FOGO, 2);
         assertThrows(IllegalStateException.class, () -> cria.aprenderTecnica(fogo));
     }
 
@@ -185,7 +199,7 @@ class CriaTest {
     @DisplayName("Deve limpar tudo ao preparar para novo combate")
     void prepararParaCombate_comStatusEPecasAtivadas_limpaTudo() {
         cria.aplicarStatus(StatusEfeito.EM_CHAMAS);
-        Peca peca = new Peca("Teste", 1, SlotPeca.PARTE_SUPERIOR, "Teste");
+        Peca peca = criarPeca("Teste", 1, SlotPeca.PARTE_SUPERIOR);
         cria.equiparPeca(peca);
         peca.ativar();
 
@@ -216,7 +230,7 @@ class CriaTest {
     @DisplayName("Deve calcular atributos de Shooter/Bruto corretamente")
     void constructor_shooterBruto_atributosCorretos() {
         // Arrange: criar um Cria Shooter/Bruto
-        Cria shooterBruto = new Cria("T35T", Chassi.SHOOTER, Elemento.FOGO, Personalidade.BRUTO);
+        Cria shooterBruto = criarCria("T35T", Chassi.SHOOTER, Elemento.FOGO, Personalidade.BRUTO);
 
         // Act: pegar os atributos calculados
         Atributos attr = shooterBruto.getAtributos();
@@ -236,10 +250,10 @@ class CriaTest {
     @DisplayName("Cria de Fogo não pode aprender técnica de Água")
     void aprenderTecnica_fogoAprendeAgua_lancaExcecao() {
         // Arrange: criar Cria de Fogo
-        Cria criaFogo = new Cria("F0G0", Chassi.SHOTO, Elemento.FOGO, Personalidade.HUMILDE);
+        Cria criaFogo = criarCria("F0G0", Chassi.SHOTO, Elemento.FOGO, Personalidade.HUMILDE);
 
         // Arrange: criar técnica de Água
-        Tecnica tecnicaAgua = new Tecnica("Tsunami", Elemento.AGUA, 3, "Ataque de água poderoso");
+        Tecnica tecnicaAgua = criarTecnica("Tsunami", Elemento.AGUA, 3);
 
         // Act + Assert: deve lançar exceção ao tentar aprender
         assertThrows(IllegalStateException.class, () -> {
@@ -253,11 +267,11 @@ class CriaTest {
     @DisplayName("Cria Neutro pode aprender técnica de qualquer elemento")
     void aprenderTecnica_criaNeutro_aprendeQualquerElemento() {
         // Arrange: Cria Neutro
-        Cria criaNeutro = new Cria("N3UTR0", Chassi.SHOTO, Elemento.NEUTRO, Personalidade.HUMILDE);
+        Cria criaNeutro = criarCria("N3UTR0", Chassi.SHOTO, Elemento.NEUTRO, Personalidade.HUMILDE);
 
         // Arrange: técnicas de elementos variados
-        Tecnica fogo = new Tecnica("Chama", Elemento.FOGO, 2, "Dano de fogo");
-        Tecnica agua = new Tecnica("Jato", Elemento.AGUA, 2, "Dano de água");
+        Tecnica fogo = criarTecnica("Chama", Elemento.FOGO, 2);
+        Tecnica agua = criarTecnica("Jato", Elemento.AGUA, 2);
 
         // Act + Assert: ambas devem funcionar
         assertTrue(criaNeutro.aprenderTecnica(fogo));
@@ -269,7 +283,7 @@ class CriaTest {
     @DisplayName("Custo efetivo deve ser +1 para elemento diferente")
     void custoEfetivo_elementoDiferente_custaMais1() {
         // Arrange: técnica de Fogo com custo 2
-        Tecnica tecnicaFogo = new Tecnica("Chama", Elemento.FOGO, 2, "Ataque de fogo");
+        Tecnica tecnicaFogo = criarTecnica("Chama", Elemento.FOGO, 2);
 
         // Assert: mesmo elemento = custo base
         assertEquals(2, tecnicaFogo.custoEfetivo(Elemento.FOGO));
@@ -279,7 +293,7 @@ class CriaTest {
         assertEquals(3, tecnicaFogo.custoEfetivo(Elemento.AGUA));
 
         // Arrange: técnica Neutra com custo 1
-        Tecnica tecnicaNeutra = new Tecnica("Soco", Elemento.NEUTRO, 1, "Soco básico");
+        Tecnica tecnicaNeutra = criarTecnica("Soco", Elemento.NEUTRO, 1);
 
         // Assert: técnica Neutra = SEMPRE custo base
         assertEquals(1, tecnicaNeutra.custoEfetivo(Elemento.FOGO));
@@ -291,7 +305,7 @@ class CriaTest {
     @DisplayName("Peça quebrada não pode ser ativada")
     void ativar_pecaQuebrada_retornaFalse() {
         // Arrange: criar e quebrar a peça
-        Peca peca = new Peca("Espada Frágil", 2, SlotPeca.PARTE_SUPERIOR, "Dano+1");
+        Peca peca = criarPeca("Espada Frágil", 2, SlotPeca.PARTE_SUPERIOR);
         peca.quebrar();
 
         // Act + Assert: ativar deve retornar false
@@ -302,7 +316,7 @@ class CriaTest {
     @Test
     @DisplayName("Peça consertada pode ser ativada novamente")
     void ativar_pecaConsertada_retornaTrue() {
-        Peca peca = new Peca("Espada Frágil", 2, SlotPeca.PARTE_SUPERIOR, "Dano+1");
+        Peca peca = criarPeca("Espada Frágil", 2, SlotPeca.PARTE_SUPERIOR);
         peca.quebrar();
         peca.consertar();  // Conserta!
 
@@ -314,7 +328,7 @@ class CriaTest {
     @DisplayName("Deve calcular atributos de Beast/Cuidadoso corretamente")
     void constructor_beastCuidadoso_atributosCorretos() {
         // Arrange: criar Cria Beast/Cuidadoso
-        Cria beastCuidadoso = new Cria("B34ST", Chassi.BEAST, Elemento.TERRA, Personalidade.CUIDADOSO);
+        Cria beastCuidadoso = criarCria("B34ST", Chassi.BEAST, Elemento.TERRA, Personalidade.CUIDADOSO);
 
         // Act: pegar atributos
         Atributos attr = beastCuidadoso.getAtributos();
@@ -339,11 +353,11 @@ class CriaTest {
         assertEquals(3, cria.memoriaDisponivel());
 
         // Equipa peça de memória 1
-        cria.equiparPeca(new Peca("Peça 1", 1, SlotPeca.PARTE_SUPERIOR, "..."));
+        cria.equiparPeca(criarPeca("Peça 1", 1, SlotPeca.PARTE_SUPERIOR));
         assertEquals(2, cria.memoriaDisponivel());
 
         // Equipa peça de memória 2
-        cria.equiparPeca(new Peca("Peça 2", 2, SlotPeca.PARTE_INFERIOR, "..."));
+        cria.equiparPeca(criarPeca("Peça 2", 2, SlotPeca.PARTE_INFERIOR));
         assertEquals(0, cria.memoriaDisponivel());
     }
 
@@ -365,8 +379,8 @@ class CriaTest {
         cria.aplicarStatus(StatusEfeito.ENVENENADO);
 
         // Equipa e ativa várias peças
-        Peca peca1 = new Peca("Peça 1", 1, SlotPeca.PARTE_SUPERIOR, "...");
-        Peca peca2 = new Peca("Peça 2", 1, SlotPeca.PARTE_INFERIOR, "...");
+        Peca peca1 = criarPeca("Peça 1", 1, SlotPeca.PARTE_SUPERIOR);
+        Peca peca2 = criarPeca("Peça 2", 1, SlotPeca.PARTE_INFERIOR);
         cria.equiparPeca(peca1);
         cria.equiparPeca(peca2);
         peca1.ativar();
