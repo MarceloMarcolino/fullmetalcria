@@ -130,6 +130,15 @@ public class App {
     /**
      * Cria os 9 Crias prontos do livro Full Metal Cria com todos os atributos,
      * peças e técnicas exatamente como descritos no material original.
+     *
+     * <p><b>Nota didática:</b> os atributos abaixo são definidos via
+     * {@code setAtributos(...)} em vez de serem computados a partir de
+     * chassi + personalidade. As fichas oficiais do livro já vêm com a
+     * distribuição dos +5 pontos iniciais aplicada, então reproduzir
+     * fielmente os valores oficiais exige override manual. Para Crias
+     * novos criados pelo sistema, o construtor
+     * {@code new Cria(nome, chassi, elemento, personalidade)} calcula
+     * os atributos a partir das bases do livro.
      */
     private static List<Cria> criarCriasProntos() {
 
