@@ -100,6 +100,15 @@ class AtributosTest {
                 attr.aplicarModificador("poder", 1));
     }
 
+    @Test
+    @DisplayName("Não deve aceitar bateria negativa")
+    void setBateria_valorNegativo_lancaExcecao() {
+        Atributos attr = new Atributos(10, 3, 3, 3, 3, 5);
+
+        assertThrows(IllegalArgumentException.class, () -> attr.setBateria(-1));
+        assertEquals(5, attr.getBateria());
+    }
+
     // ==================== toString ====================
 
     @Test

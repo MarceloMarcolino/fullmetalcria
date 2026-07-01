@@ -73,9 +73,12 @@ public class Cria {
      *
      * @param peca a peça a equipar
      * @return true se equipou com sucesso
-     * @throws IllegalStateException se memória insuficiente
+     * @throws IllegalStateException se memória insuficiente ou a mesma peça já foi equipada
      */
     public boolean equiparPeca(Peca peca) {
+        if (pecas.contains(peca)) {
+            throw new IllegalStateException("Esta peça já está equipada neste Cria!");
+        }
         if (peca.getMemoria() > memoriaDisponivel()) {
             throw new IllegalStateException(
                     String.format("Memória insuficiente! Disponível: %d, Necessário: %d",
@@ -153,8 +156,12 @@ public class Cria {
      * Adiciona marcos ao Cria (máximo 3 por episódio).
      *
      * @param quantidade marcos a adicionar
+     * @throws IllegalArgumentException se quantidade for negativa
      */
     public void ganharMarcos(int quantidade) {
+        if (quantidade < 0) {
+            throw new IllegalArgumentException("Quantidade de marcos não pode ser negativa");
+        }
         this.marcos += quantidade;
     }
 

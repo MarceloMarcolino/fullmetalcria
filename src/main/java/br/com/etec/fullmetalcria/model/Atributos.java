@@ -103,7 +103,12 @@ public class Atributos {
     public void setDano(int dano) { this.dano = dano; }
 
     public int getBateria() { return bateria; }
-    public void setBateria(int bateria) { this.bateria = bateria; }
+    public void setBateria(int bateria) {
+        if (bateria < 0) {
+            throw new IllegalArgumentException("Bateria não pode ser negativa");
+        }
+        this.bateria = bateria;
+    }
 
     @Override
     public String toString() {

@@ -110,6 +110,17 @@ class CriaTest {
                 cria.equiparPeca(criarPeca("Peça Maior", 2, SlotPeca.PARTE_INFERIOR)));
     }
 
+    @Test
+    @DisplayName("Não deve equipar a mesma instância de peça duas vezes")
+    void equiparPeca_mesmaInstancia_lancaExcecao() {
+        Peca turbo = criarPeca("Turbo", 1, SlotPeca.PARTE_INFERIOR);
+
+        cria.equiparPeca(turbo);
+
+        assertThrows(IllegalStateException.class, () -> cria.equiparPeca(turbo));
+        assertEquals(1, cria.getPecas().size());
+    }
+
     // ==================== TÉCNICAS ====================
 
     @Test
@@ -224,6 +235,13 @@ class CriaTest {
         cria.ganharMarcos(2);
         cria.ganharMarcos(3);
         assertEquals(5, cria.getMarcos());
+    }
+
+    @Test
+    @DisplayName("Não deve aceitar marcos negativos")
+    void ganharMarcos_valorNegativo_lancaExcecao() {
+        assertThrows(IllegalArgumentException.class, () -> cria.ganharMarcos(-3));
+        assertEquals(0, cria.getMarcos());
     }
 
     @Test
